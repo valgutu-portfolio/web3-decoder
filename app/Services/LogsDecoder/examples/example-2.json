@@ -1,0 +1,42 @@
+{
+    "__comment": "https://etherscan.io/tx/0x9390971b504c10620233a2f0a98cd3acd728d264cbe383d272ce2d3ba72073d2#eventlog",
+    "logs": {
+        "topics": [
+            "0x2e02b9f3fb96e8f4b432fd531dbfa9d9640f8d2f5cc3447fbc6e866143b7f50d",
+            "0x0000000000000000000000005af1ba5b0dbde83010d5ed7ccfcf9d178f04ba70"
+        ],
+        "data": "0x000000000000000000000000000000000000000000000000000000004d7c6d000000000000000000000000000000000000000000000000000000000000010d88000000000000000000000000000000000000000000000000000000006634abdf"
+    },
+    "eventAbi":
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "buyer",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "usdtAmount",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "tokenPrice",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            }
+        ],
+        "name": "TokensBoughtWithUsdt",
+        "type": "event"
+    }
+}

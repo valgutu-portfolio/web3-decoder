@@ -1,0 +1,48 @@
+{
+    "__comment": "https://etherscan.io/tx/0xc40a640f126c9a9c6032ef506c3e3dc6f5e46f53447fad0748901373ccb7a88f#eventlog",
+    "logs": {
+        "topics": [
+            "0x2e02b9f3fb96e8f4b432fd531dbfa9d9640f8d2f5cc3447fbc6e866143b7f50d",
+            "0x000000000000000000000000a5b8780fbea347118eba76f849d2257271f1deae"
+        ],
+        "data": "0x00000000000000000000000000000000000000000000000000038d7ea4c680000000000000000000000000000000000000000000000000c5e61d0758614300000000000000000000000000000000000000000000000000000000000000010d88000000000000000000000000000000000000000000000000000000006613e017"
+    },
+    "eventAbi":
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "buyer",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "ethAmount",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "ethPrice",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "tokenPrice",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
+            }
+        ],
+        "name": "TokensBoughtWithEth",
+        "type": "event"
+    }
+}

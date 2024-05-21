@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CheckTransactionsController;
+use App\Http\Controllers\LogsDecoderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::post('/order', '');
+Route::post('/transaction', CheckTransactionsController::class);
+Route::post('/logs/dehash', LogsDecoderController::class);
 
 Route::fallback(function (){
     abort(404, 'API resource not found');
