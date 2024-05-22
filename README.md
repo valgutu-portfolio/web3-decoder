@@ -1,4 +1,4 @@
-# Run Docker containers
+# Run Docker Сontainers
 make up
 
 Localhost URL: http://localhost:80
@@ -6,7 +6,7 @@ Localhost URL: http://localhost:80
 # API 
 POST `{{url}}/api/logs/decode`
 
-Request Body:
+Request Body Example:
 ```
 {
     "__comment": "https://etherscan.io/tx/0x1d52d80fedb68fee449ecedbc7d0e1a04118da497ec6229f59487ef03f689a02#eventlog",
@@ -66,7 +66,7 @@ Request Body:
 }
 ```
 
-Response Body:
+Response Body Example:
 ```
 {
     "logs": {
