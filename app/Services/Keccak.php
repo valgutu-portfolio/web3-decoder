@@ -308,5 +308,4 @@ final class Keccak
 
         return self::keccak($in, $security_level, $outlen, 0x1f, $raw_output);
     }
-
 }

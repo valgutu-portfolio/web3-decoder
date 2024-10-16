@@ -4,8 +4,11 @@ COPY php.ini /usr/local/etc/php/
 COPY docker.conf /usr/local/etc/php-fpm.d/docker.conf
 COPY .bashrc /root/
 
-RUN apt-get update \
-  && apt-get install -y build-essential zlib1g-dev default-mysql-client curl gnupg procps vim git unzip libzip-dev libpq-dev \
+RUN apt-get update
+RUN apt-get install -y libgmp-dev
+RUN docker-php-ext-install gmp
+
+RUN apt-get install -y build-essential zlib1g-dev default-mysql-client curl gnupg procps vim git unzip libzip-dev libpq-dev \
   && docker-php-ext-install zip pdo pdo_mysql mysqli pdo_pgsql pgsql \
   && docker-php-ext-enable pdo_mysql
 

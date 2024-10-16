@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Controllers\CheckTransactionsController;
-use App\Http\Controllers\LogsDecoderController;
-use App\Http\Controllers\PushNotificationController;
+use App\Http\Controllers\HomePageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,10 +13,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-Route::post('/transaction', CheckTransactionsController::class);
-Route::post('/logs/dehash', LogsDecoderController::class);
-Route::post('/push', PushNotificationController::class);
+Route::get('/', HomePageController::class);
 
 Route::fallback(function (){
     abort(404, 'API resource not found');
