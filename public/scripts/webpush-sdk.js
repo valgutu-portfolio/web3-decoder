@@ -41,11 +41,16 @@ document.addEventListener('DOMContentLoaded', function(){
         const params = new URL(location.href).searchParams;
         const clickId = params.get('cid');
         const endpointURL = API_URL.concat("/api/webpush/subscription");
+        const pageUrl = window.location.href;
+        const userLang = navigator.languages;
+
         const data = {
             clickId: clickId,
             endpoint: subscription.endpoint,
             keyAuth: subscription.keys.auth,
             keyP256dh: subscription.keys.p256dh,
+            pageUrl: pageUrl,
+            userLanguage: userLang,
         }
 
         fetch(endpointURL, {
@@ -73,13 +78,11 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     }
 
-    document.getElementById("btnNotifDismiss").addEventListener("click", dismissNotification);
     function dismissNotification() {
         setStorageNotificationDismissed();
         hideNotificationPopup();
     }
 
-    document.getElementById("btnNotifAllow").addEventListener("click", requestNotificationPermission);
     function requestNotificationPermission() {
         // request permission from the user to send notifications
         Notification.requestPermission().then(function(permission) {
@@ -116,13 +119,12 @@ document.addEventListener('DOMContentLoaded', function(){
     {
         return 'true' === getStorageNotificationDismissed();
     }
-    // NOTIFICATION POPUP END **
 
     function appendNotificationPopup() {
         document.body.innerHTML += `
-        <div id="notificationPopup" className="nt-block"
-             style="display: none;position: fixed; background: white; box-shadow: rgb(110 169 223 / 20%) 3px 1px 16px 0, rgb(239 239 239 / 30%) -6px -2px 8px 0; padding: 20px 30px; top: 15px; width: 360px; left: 50%; transform: translate(-50%, 0);border-radius: 10px">
-            <div className="nt-wrapper">
+        <div id="notificationPopup" class="nt-block"
+             style="display: none;position: fixed; background: white; box-shadow: rgb(110 169 223 / 20%) 3px 1px 16px 0, rgb(239 239 239 / 30%) -6px -2px 8px 0; padding: 20px 30px; top: 15px; width: 400px; left: 50%; transform: translate(-50%, 0);border-radius: 10px">
+            <div class="nt-wrapper">
                 <div style="display: flex; flex-direction: row">
                     <div>
                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="50px" height="50px" viewBox="0 0 100 100" version="1.1">
@@ -133,21 +135,25 @@ document.addEventListener('DOMContentLoaded', function(){
                             </g>
                         </svg>
                     </div>
-                    <div style="font-family: system-ui;font-size: 15px;padding: 0 10px">We'd like to show you
+                    <div style="font-family: system-ui;font-size: 15px;padding: 0 10px;line-height: 20px!important;">We'd like to show you
                         notifications for the latest news and updates.
                     </div>
                 </div>
-                <div className="nt-buttons" style="display: flex;flex-direction: row;justify-content: right;">
+                <div class="nt-buttons" style="display: flex;flex-direction: row;justify-content: right;">
                     <button id="btnNotifDismiss"
-                            style="border: none;background: none;color: #1b81d5;font-size: 14px; cursor: pointer;">No
+                            style="border: none;background: none;color: #1b81d5;font-size: 14px; cursor: pointer;font-weight: normal!important;text-align: center;width: 80px;height: 34px;padding: 0 !important; box-shadow: none !important;">No
                         Thanks
                     </button>
                     <button id="btnNotifAllow"
-                            style="border: none;border-radius: 4px;background: #1b81d5;padding: 9px 24px;color: white;margin-left: 10px;cursor: pointer;">Allow
+                            style="border: none;border-radius: 4px;background: #1b81d5;padding: 0!important;color: white;margin-left: 10px;cursor: pointer;font-weight: normal!important;text-align: center;width: 80px;height: 34px;box-shadow: none !important;">Allow
                     </button>
                 </div>
             </div>
         </div>
         `
+
+        document.getElementById("btnNotifDismiss").addEventListener("click", dismissNotification);
+        document.getElementById("btnNotifAllow").addEventListener("click", requestNotificationPermission);
     }
+    // NOTIFICATION POPUP END **
 });
