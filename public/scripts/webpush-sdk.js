@@ -1,4 +1,3 @@
-const API_URL = 'https://apistaging.dashfx.net';
 document.addEventListener('DOMContentLoaded', function(){
     function registerServiceWorker() {
         // register the service worker (it will work even when the tab is closed)
@@ -25,8 +24,12 @@ document.addEventListener('DOMContentLoaded', function(){
                     const subscription = result.toJSON();
                     console.log('User is subscribed.');
 
-                    // Send the subscription object to your server to store it
-                    sendSubscriptionToServer(subscription);
+                    fetchConfig().then(function () {
+                        // Send the subscription object to your server to store it
+                        sendSubscriptionToServer(subscription);
+                    }).catch(function (error) {
+                        console.log('Unable to fetch config.json', error);
+                    })
                 })
                 .catch(function(error) {
                     console.error('Failed to subscribe the user:', error);
@@ -40,30 +43,41 @@ document.addEventListener('DOMContentLoaded', function(){
         // try to get the DashFX click id from the url
         const params = new URL(location.href).searchParams;
         const clickId = params.get('cid');
-        const endpointURL = API_URL.concat("/api/webpush/subscription");
-        const pageUrl = window.location.href;
-        const userLang = navigator.languages;
 
-        const data = {
-            clickId: clickId,
-            endpoint: subscription.endpoint,
-            keyAuth: subscription.keys.auth,
-            keyP256dh: subscription.keys.p256dh,
-            pageUrl: pageUrl,
-            userLanguage: userLang,
-        }
+        getConfigApiUrl().then(function (apiUrl) {
+            const clientToken = getConfigApiClientToken().then(function (token) {
+                const endpointURL = apiUrl.concat("api/webpush/subscription");
+                const pageUrl = window.location.href;
+                const userLang = navigator.languages;
 
-        fetch(endpointURL, {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        }).then(res => {
-            if (200 === res.status) {
-                console.log("Subscription sent successfully!");
-            } else {
-                console.log("Error when sending subscription.");
-            }
-        });
+                const data = {
+                    clickId: clickId,
+                    endpoint: subscription.endpoint,
+                    keyAuth: subscription.keys.auth,
+                    keyP256dh: subscription.keys.p256dh,
+                    pageUrl: pageUrl,
+                    userLanguages: userLang,
+                }
+
+                fetch(endpointURL, {
+                    method: "POST",
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                }).then(res => {
+                    if (200 === res.status) {
+                        console.log("Subscription sent successfully!");
+                    } else {
+                        console.log("Error when sending subscription.");
+                    }
+                });
+
+            }).catch(function (error) {
+                console.log('Cannot retrieve client token', error);
+            })
+        })
     }
 
     // NOTIFICATION POPUP BEGIN **
@@ -123,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function(){
     function appendNotificationPopup() {
         document.body.innerHTML += `
         <div id="notificationPopup" class="nt-block"
-             style="display: none;position: fixed; background: white; box-shadow: rgb(110 169 223 / 20%) 3px 1px 16px 0, rgb(239 239 239 / 30%) -6px -2px 8px 0; padding: 20px 30px; top: 15px; width: 400px; left: 50%; transform: translate(-50%, 0);border-radius: 10px">
+             style="display: none;position: fixed; background: white; box-shadow: rgba(110, 169, 223, 0.46) 3px 1px 16px 0px, rgb(150 150 150 / 30%) -6px -2px 8px 0px; padding: 20px 30px; top: 15px; width: 400px; left: 50%; transform: translate(-50%, 0);border-radius: 10px">
             <div class="nt-wrapper">
                 <div style="display: flex; flex-direction: row">
                     <div>
@@ -157,3 +171,71 @@ document.addEventListener('DOMContentLoaded', function(){
     }
     // NOTIFICATION POPUP END **
 });
+
+// url to config file
+const jsonFileUrl = "https://dashfx-webpush-staging.s3.eu-west-2.amazonaws.com/config.json";
+// json from config file
+let configJson = null
+
+// Function to fetch and read the JSON file
+async function fetchConfig() {
+    // try to get from localstorage
+    configJson = await getStorageConfig()
+
+    if (configJson) {
+        return configJson
+    }
+
+    // try to fetch config from S3
+    try {
+        const response = await fetch(jsonFileUrl); // Fetch the JSON file
+        configJson = await response.json()
+        setStorageConfig(configJson)
+        return configJson; // Parse it as JSON
+    } catch (error) {
+        console.error("Error reading JSON file:", error);
+        return [];
+    }
+}
+function setStorageConfig(url)
+{
+    const now = new Date()
+
+    // `item` is an object which contains the original value
+    // as well as the time when it's supposed to expire
+    const item = {
+        value: url,
+        expiry: now.getTime() + 86400*100,
+    }
+
+    localStorage.setItem("config", JSON.stringify(item));
+}
+function removeStorageConfig() {
+    localStorage.removeItem("config")
+
+}
+function getStorageConfig()
+{
+    const itemStr = localStorage.getItem("config");
+    if (!itemStr ) {
+        return null
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+    // compare the expiry time of the item with the current time
+    if (now.getTime() > item.expiry) {
+        // If the item is expired, delete the item from storage
+        // and return null
+        removeStorageApiUrl()
+        return null
+    }
+    return item.value
+}
+async function getConfigApiUrl()
+{
+    return configJson.API_URL || null
+}
+async function getConfigApiClientToken()
+{
+    return configJson.CLIENT_TOKEN || null
+}
